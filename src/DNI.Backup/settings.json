@@ -1,0 +1,14 @@
+{
+    "backupDirectories": [
+        {
+            "rootDir": "D:\\Git\\Personal",
+            "includeGlob": "**/*",
+            "excludeGlobs": [
+                "**/.git/",
+                "**/obj/",
+                "**/bin/"
+            ],
+            "preserveTree": true
+        }
+    ]
+}
