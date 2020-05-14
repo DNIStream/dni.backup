@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -23,7 +24,7 @@ namespace DNI.Backup.Test.Services.FileList {
 
         private readonly IFixture _fixture = new Fixture().Customize(new AutoMoqCustomization {ConfigureMembers = true});
 
-        private Mock<IValidator<BackupDirectorySetting>> _backupDirectorySettingValidatorMock;
+        private readonly Mock<IValidator<BackupDirectorySetting>> _backupDirectorySettingValidatorMock;
 
         public FileListServiceTests(ITestOutputHelper _output) {
             this._output = _output;
@@ -34,6 +35,7 @@ namespace DNI.Backup.Test.Services.FileList {
         private IFileListService GetService() {
             return new FileListService(_backupDirectorySettingValidatorMock.Object);
         }
+
         // TODO: https://anthonychu.ca/post/async-streams-dotnet-core-3-iasyncenumerable/
         [Fact]
         public async Task GetFiles_ThrowsException_WhenBackupDirectorySettings_IsNull() {
@@ -63,7 +65,7 @@ namespace DNI.Backup.Test.Services.FileList {
             var settings = _fixture.CreateMany<BackupDirectorySetting>(3);
 
             // Act
-            var result = service.GetFilesAsync(settings);
+            var result = await service.GetFilesAsync(settings);
 
             // Assert
             _backupDirectorySettingValidatorMock
@@ -91,7 +93,7 @@ namespace DNI.Backup.Test.Services.FileList {
         }
 
         [Fact]
-        public async Task GetFiles_ReturnsAllFilePathsWhenExpected() {
+        public async Task GetFiles_ReturnsAllFilePaths_WhenCatchAllGlob_AndNoExcludesSpecified() {
             // Arrange
             var rootPath = Path.Join(Path.GetTempPath(), Guid.NewGuid().ToString());
             Directory.CreateDirectory(rootPath);
@@ -104,7 +106,7 @@ namespace DNI.Backup.Test.Services.FileList {
             foreach(var f in files) {
                 var directoryPath = Path.GetDirectoryName(f);
                 Directory.CreateDirectory(directoryPath);
-                File.Create(f);
+                File.Create(f).Dispose();
             }
 
             var service = GetService();
@@ -114,12 +116,137 @@ namespace DNI.Backup.Test.Services.FileList {
             };
 
             // Act
-            await foreach(var file in service.GetFilesAsync(new[] {settings})) {
+            var results = (await service.GetFilesAsync(new[] {settings})).ToArray();
+            Assert.Equal(4, results.Length);
+            foreach(var file in results) {
                 Assert.Contains(file, files);
             }
 
             // Cleanup
-            // Directory.Delete(rootPath, true);
+            Directory.Delete(rootPath, true);
+        }
+
+        [Fact]
+        public async Task GetFiles_ReturnsOnlyFilePaths_SpecifiedInIncludeGlob() {
+            // Arrange
+            var rootPath = Path.Join(Path.GetTempPath(), Guid.NewGuid().ToString());
+            Directory.CreateDirectory(rootPath);
+            var files = new[] {
+                $@"{rootPath}\test.txt",
+                $@"{rootPath}\test\test.txt",
+                $@"{rootPath}\.git\test.txt",
+                $@"{rootPath}\temp\jeff\test.txt"
+            };
+            foreach(var f in files) {
+                var directoryPath = Path.GetDirectoryName(f);
+                Directory.CreateDirectory(directoryPath);
+                File.Create(f).Dispose();
+            }
+
+            var service = GetService();
+            var settings = new BackupDirectorySetting {
+                RootDir = rootPath,
+                IncludeGlob = ".git/"
+            };
+
+            // Act
+            var results = (await service.GetFilesAsync(new[] {settings})).ToArray();
+            Assert.Single(results);
+            Assert.Equal($@"{rootPath}\.git\test.txt", results[0]);
+
+            // Cleanup
+            Directory.Delete(rootPath, true);
+        }
+
+        [Fact]
+        public async Task GetFiles_ReturnsAllFilePathsExceptExcludedFileGlob() {
+            // Arrange
+            var rootPath = Path.Join(Path.GetTempPath(), Guid.NewGuid().ToString());
+            Directory.CreateDirectory(rootPath);
+            var files = new[] {
+                $@"{rootPath}\test.txt",
+                $@"{rootPath}\test\test.txt",
+                $@"{rootPath}\.git\test.txt",
+                $@"{rootPath}\temp\jeff\test.txt",
+                $@"{rootPath}\test1.txt",
+                $@"{rootPath}\jeff\test1.txt"
+            };
+            foreach(var f in files) {
+                var directoryPath = Path.GetDirectoryName(f);
+                Directory.CreateDirectory(directoryPath);
+                File.Create(f).Dispose();
+            }
+
+            var service = GetService();
+            var settings = new BackupDirectorySetting {
+                RootDir = rootPath,
+                IncludeGlob = "**/*",
+                ExcludeGlobs = new[] {
+                    "**/test.txt"
+                }
+            };
+
+            // Act
+            var results = (await service.GetFilesAsync(new[] {settings})).ToArray();
+            Assert.Equal(2, results.Length);
+            Assert.Equal(results, new[] {
+                $@"{rootPath}\test1.txt",
+                $@"{rootPath}\jeff\test1.txt"
+            }, StringComparer.InvariantCulture);
+
+            // Cleanup
+            Directory.Delete(rootPath, true);
+        }
+
+        [Fact]
+        public async Task GetFiles_ReturnsAllFilePathsExceptExcludedFileGlobs_AndReordersAlphabetically() {
+            // Arrange
+            var rootPath = Path.Join(Path.GetTempPath(), Guid.NewGuid().ToString());
+            Directory.CreateDirectory(rootPath);
+            var files = new[] {
+                $@"{rootPath}\test.txt",
+                $@"{rootPath}\test\test.txt",
+                $@"{rootPath}\test\chris\chris.png",
+                $@"{rootPath}\.git\test.txt",
+                $@"{rootPath}\.git\chris.png",
+                $@"{rootPath}\temp\jeff\test.txt",
+                $@"{rootPath}\test1.txt",
+                $@"{rootPath}\jeff\test1.txt"
+            };
+            foreach(var f in files) {
+                var directoryPath = Path.GetDirectoryName(f);
+                Directory.CreateDirectory(directoryPath);
+                File.Create(f).Dispose();
+            }
+
+            var service = GetService();
+            var settings = new BackupDirectorySetting {
+                RootDir = rootPath,
+                IncludeGlob = "**/*",
+                ExcludeGlobs = new[] {
+                    "*/test*.txt",
+                    ".git/**/*"
+                }
+            };
+
+            // Act
+            var results = (await service.GetFilesAsync(new[] {settings})).ToArray();
+            var expected = new[] {
+                $@"{rootPath}\test.txt",
+                $@"{rootPath}\test1.txt",
+                $@"{rootPath}\temp\jeff\test.txt",
+                $@"{rootPath}\test\chris\chris.png"
+            };
+            _output.WriteLine("Actual:");
+            _output.WriteLine(string.Join('\n', results));
+
+            _output.WriteLine("Expected:");
+            _output.WriteLine(string.Join('\n', expected));
+            Assert.Equal(4, results.Length);
+            Assert.Equal(results, expected, StringComparer.InvariantCulture);
+
+            // Cleanup
+            Directory.Delete(rootPath, true);
         }
     }
 }

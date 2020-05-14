@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 
 using FluentValidation;
@@ -19,7 +18,7 @@ namespace DNI.Backup.Services.FileList {
             _backupDirectorySettingValidator = backupDirectorySettingValidator;
         }
 
-        public async IAsyncEnumerable<string> GetFilesAsync(IEnumerable<BackupDirectorySetting> backupDirectorySettings) {
+        public async Task<IEnumerable<string>> GetFilesAsync(IEnumerable<BackupDirectorySetting> backupDirectorySettings) {
             if(backupDirectorySettings == null) {
                 throw new ArgumentNullException(nameof(backupDirectorySettings));
             }
@@ -35,7 +34,7 @@ namespace DNI.Backup.Services.FileList {
                     var errorMessage = new StringBuilder();
                     errorMessage.AppendLine("The following validation errors occurred:");
                     foreach(var error in result.Errors) {
-                        errorMessage.AppendLine($"{error.PropertyName} | {error.ErrorMessage}");    
+                        errorMessage.AppendLine($"{error.PropertyName} | {error.ErrorMessage}");
                     }
 
                     throw new BackupDirectoryValidationException(errorMessage.ToString());
@@ -45,10 +44,17 @@ namespace DNI.Backup.Services.FileList {
             var matches = new Matcher();
             var s = settings[0];
             matches.AddInclude(s.IncludeGlob);
-            var paths = matches.Execute(new DirectoryInfoWrapper(new DirectoryInfo(s.RootDir)));
-            foreach(var p in paths.Files) {
-                yield return Path.GetFullPath(Path.Combine(s.RootDir, p.Path));
+            if(s.ExcludeGlobs != null) {
+                foreach(var ex in s.ExcludeGlobs) {
+                    matches.AddExclude(ex);
+                }
             }
+
+            var paths = matches.Execute(new DirectoryInfoWrapper(new DirectoryInfo(s.RootDir)));
+
+            return paths
+                .Files
+                .Select(p => Path.GetFullPath(Path.Combine(s.RootDir, p.Path)));
         }
     }
 }

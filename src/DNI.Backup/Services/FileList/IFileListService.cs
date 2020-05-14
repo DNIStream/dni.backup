@@ -3,6 +3,6 @@ using System.Threading.Tasks;
 
 namespace DNI.Backup.Services.FileList {
     public interface IFileListService {
-        IAsyncEnumerable<string> GetFilesAsync(IEnumerable<BackupDirectorySetting> backupDirectorySettings);
+        Task<IEnumerable<string>> GetFilesAsync(IEnumerable<BackupDirectorySetting> backupDirectorySettings);
     }
 }
