@@ -11,6 +11,7 @@ namespace DNI.Backup.Test.Services {
             this._output = _output;
         }
 
+        //[Fact]
         [Fact(Skip = "TBC")]
         public async Task BackupTest() {
             // Arrange
@@ -20,7 +21,6 @@ namespace DNI.Backup.Test.Services {
             backupService.Test();
 
             // Assert
-
         }
     }
 }

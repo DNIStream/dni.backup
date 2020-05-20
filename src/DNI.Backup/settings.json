@@ -1,6 +1,24 @@
 {
-    "backupDirectories": [
+    "serverIP": "192.168.2.1",
+    "serverTCPPort": 873,
+    "schedules": [
         {
+            "schedule": "mon-20:00",
+            "backupConfigs": [
+                "git-dirs"
+            ]
+        },
+        {
+            "schedule": "bi-weekly-tue-16:00",
+            "backupConfigs": [
+                "git-dirs",
+                "d-drive"
+            ]
+        }
+    ],
+    "backupConfigs": [
+        {
+            "id": "git-dirs",
             "rootDir": "D:\\Git\\Personal",
             "includeGlob": "**/*",
             "excludeGlobs": [
@@ -8,7 +26,10 @@
                 "**/obj/",
                 "**/bin/"
             ],
-            "preserveTree": true
+            "preserveTree": true,
+            "deleteDestinationFilesNotInSource": true,
+            "compressBeforeTransfer": true,
+            "compressDestination": false
         }
     ]
 }

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
-using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -19,6 +18,7 @@ using Xunit;
 using Xunit.Abstractions;
 
 namespace DNI.Backup.Test.Services.FileList {
+    [Trait(TestTraits.TEST_TYPE, TestTraits.INTEGRATION)]
     public class FileListServiceTests {
         private readonly ITestOutputHelper _output;
 
