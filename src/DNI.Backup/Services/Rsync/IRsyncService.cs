@@ -3,10 +3,10 @@ using System.Threading.Tasks;
 
 namespace DNI.Backup.Services.Rsync {
     public interface IRsyncService {
-        Task<MemoryStream> CreateSignature(string inputFilePath);
+        Task<MemoryStream> CreateSignatureAsync(string inputFilePath);
 
-        Task<MemoryStream> CreateDelta(string inputFilePath, Stream signatureStream);
+        Task<MemoryStream> CreateDeltaAsync(string inputFilePath, Stream signatureStream);
 
-        Task<MemoryStream> ApplyDelta(string inputFilePath, Stream deltaStream);
+        Task<bool> ApplyDeltaAsync(string inputFilePath, Stream deltaStream);
     }
 }
