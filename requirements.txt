@@ -1,8 +1,0 @@
-* No file locking
-* Be able to target file & directory patterns (glob)
-* Backs up files on a schedule
-* Backs up files in real time
-* Backs up local workstation files to a NAS (file share and / or existing protocol such as rsync)
-* Must run in the background and not interfere with forground applications
-* Must have a UI interface and / or file based control mechanism (interface or config files)
-* Should only copy files that have changed (deltas)

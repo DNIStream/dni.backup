@@ -24,11 +24,11 @@ namespace DNI.Backup.Test.Services.FileList {
             this._output = _output;
         }
 
-        private IValidator<BackupDirectorySetting> GetValidator() {
-            return new BackupDirectorySettingValidator();
+        private DirectoryGlobSettingsValidator GetValidator() {
+            return new DirectoryGlobSettingsValidator();
         }
 
-        #region RootDir
+        #region SourceRootDir
 
         [Theory]
         [InlineData(null)]
@@ -40,8 +40,8 @@ namespace DNI.Backup.Test.Services.FileList {
 
             // Act & Assert
             validator
-                .ShouldHaveValidationErrorFor(s => s.RootDir, value)
-                .WithErrorMessage("RootDir is required");
+                .ShouldHaveValidationErrorFor(s => s.SourceRootDir, value)
+                .WithErrorMessage("SourceRootDir is required");
         }
 
         [Theory]
@@ -59,8 +59,8 @@ namespace DNI.Backup.Test.Services.FileList {
 
             // Act & Assert
             validator
-                .ShouldHaveValidationErrorFor(s => s.RootDir, value)
-                .WithErrorMessage(@"RootDir must be a fully qualified root path (e.g. C:\ in Windows, /usr/ in linux)");
+                .ShouldHaveValidationErrorFor(s => s.SourceRootDir, value)
+                .WithErrorMessage(@"SourceRootDir must be a fully qualified root path (e.g. C:\ in Windows, /usr/ in linux)");
         }
 
         [Theory]
@@ -72,7 +72,7 @@ namespace DNI.Backup.Test.Services.FileList {
             var validator = GetValidator();
 
             // Act & Assert
-            validator.ShouldNotHaveValidationErrorFor(s => s.RootDir, value);
+            validator.ShouldNotHaveValidationErrorFor(s => s.SourceRootDir, value);
         }
 
         [Fact]
@@ -82,7 +82,7 @@ namespace DNI.Backup.Test.Services.FileList {
             var validator = GetValidator();
 
             // Act & Assert
-            validator.ShouldHaveValidationErrorFor(s => s.RootDir, pathToTest)
+            validator.ShouldHaveValidationErrorFor(s => s.SourceRootDir, pathToTest)
                 .WithErrorMessage(@$"Path '{pathToTest}' does not exist");
         }
 

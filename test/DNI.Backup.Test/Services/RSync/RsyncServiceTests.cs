@@ -187,6 +187,23 @@ namespace DNI.Backup.Test.Services.RSync {
             File.Delete(destinationFilePath);
         }
 
+        [Fact]
+        public async Task CreateDelta_ThrowsException_WhenInvalidSignatureStreamIsPassed() {
+            // Arrange
+            var service = GetService();
+            var sourceFilePath = Path.Join(Path.GetTempPath(), $"{Guid.NewGuid()}.temp");
+            await File.Create(sourceFilePath).DisposeAsync();
+
+            await using(var signatureStream = new MemoryStream()) {
+                // Act
+                var ex = await Assert.ThrowsAsync<InvalidDataException>(() => service.CreateDeltaAsync(sourceFilePath, signatureStream));
+                Assert.Equal("The signature file uses a different file format than this program can handle.", ex.Message);
+            }
+
+            // Cleanup
+            File.Delete(sourceFilePath);
+        }
+
         #endregion
 
         #region ApplyDeltaAsync
@@ -267,17 +284,13 @@ namespace DNI.Backup.Test.Services.RSync {
             var actualText = File.ReadAllText(destinationFilePath);
             Assert.Equal(expectedText, actualText);
             Assert.True(result);
+            // We know a .transfer file is created, so ensure that it is cleaned up and deleted
+            Assert.False(File.Exists(string.Concat(destinationFilePath, ".transfer")));
 
             // Cleanup
             File.Delete(destinationFilePath);
             File.Delete(sourceFilePath);
         }
-
-        // TODO: Verify failed delta / copies
-
-        // TODO: Verify invalid signatures
-
-        // TODO: Verify that the temp file is deleted?
 
         #endregion
     }

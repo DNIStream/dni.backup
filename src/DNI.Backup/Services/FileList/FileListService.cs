@@ -12,20 +12,20 @@ using Microsoft.Extensions.FileSystemGlobbing.Abstractions;
 
 namespace DNI.Backup.Services.FileList {
     public class FileListService : IFileListService {
-        private readonly IValidator<BackupDirectorySetting> _backupDirectorySettingValidator;
+        private readonly IValidator<DirectoryGlobSettings> _backupDirectorySettingValidator;
 
-        public FileListService(IValidator<BackupDirectorySetting> backupDirectorySettingValidator) {
+        public FileListService(IValidator<DirectoryGlobSettings> backupDirectorySettingValidator) {
             _backupDirectorySettingValidator = backupDirectorySettingValidator;
         }
 
-        public async Task<IEnumerable<string>> GetFilesAsync(IEnumerable<BackupDirectorySetting> backupDirectorySettings) {
-            if(backupDirectorySettings == null) {
-                throw new ArgumentNullException(nameof(backupDirectorySettings));
+        public async Task<IEnumerable<string>> GetFilesAsync(IEnumerable<IDirectoryGlobSettings> directoryGlobSettings) {
+            if(directoryGlobSettings == null) {
+                throw new ArgumentNullException(nameof(directoryGlobSettings));
             }
 
-            var settings = backupDirectorySettings.ToArray();
+            var settings = directoryGlobSettings.ToArray();
             if(!settings.Any()) {
-                throw new ArgumentException("backupDirectorySettings must contain at least one entry", nameof(backupDirectorySettings));
+                throw new ArgumentException("directoryGlobSettings must contain at least one entry", nameof(directoryGlobSettings));
             }
 
             foreach(var setting in settings) {
@@ -37,7 +37,7 @@ namespace DNI.Backup.Services.FileList {
                         errorMessage.AppendLine($"{error.PropertyName} | {error.ErrorMessage}");
                     }
 
-                    throw new BackupDirectoryValidationException(errorMessage.ToString());
+                    throw new DirectoryGlobSettingsValidationException(errorMessage.ToString());
                 }
             }
 
@@ -50,11 +50,11 @@ namespace DNI.Backup.Services.FileList {
                 }
             }
 
-            var paths = matches.Execute(new DirectoryInfoWrapper(new DirectoryInfo(s.RootDir)));
+            var paths = matches.Execute(new DirectoryInfoWrapper(new DirectoryInfo(s.SourceRootDir)));
 
             return paths
                 .Files
-                .Select(p => Path.GetFullPath(Path.Combine(s.RootDir, p.Path)));
+                .Select(p => Path.GetFullPath(Path.Combine(s.SourceRootDir, p.Path)));
         }
     }
 }

@@ -24,16 +24,16 @@ namespace DNI.Backup.Test.Services.FileList {
 
         private readonly IFixture _fixture = new Fixture().Customize(new AutoMoqCustomization {ConfigureMembers = true});
 
-        private readonly Mock<IValidator<BackupDirectorySetting>> _backupDirectorySettingValidatorMock;
+        private readonly Mock<IValidator<DirectoryGlobSettings>> _directoryGlobSettingsValidatorMock;
 
         public FileListServiceTests(ITestOutputHelper _output) {
             this._output = _output;
 
-            _backupDirectorySettingValidatorMock = Mock.Get(_fixture.Create<IValidator<BackupDirectorySetting>>());
+            _directoryGlobSettingsValidatorMock = Mock.Get(_fixture.Create<IValidator<DirectoryGlobSettings>>());
         }
 
         private IFileListService GetService() {
-            return new FileListService(_backupDirectorySettingValidatorMock.Object);
+            return new FileListService(_directoryGlobSettingsValidatorMock.Object);
         }
 
         // TODO: https://anthonychu.ca/post/async-streams-dotnet-core-3-iasyncenumerable/
@@ -44,47 +44,47 @@ namespace DNI.Backup.Test.Services.FileList {
 
             // Act & Assert
             var result = await Assert.ThrowsAsync<ArgumentNullException>(() => service.GetFilesAsync(null));
-            Assert.Equal("backupDirectorySettings", result.ParamName);
+            Assert.Equal("directoryGlobSettings", result.ParamName);
         }
 
         [Fact]
         public async Task GetFiles_ThrowsException_WhenBackupDirectorySettings_ContainsEmptyEnumerable() {
             // Arrange
             var service = GetService();
-            var settings = new BackupDirectorySetting[0];
+            var settings = new DirectoryGlobSettings[0];
 
             // Act & Assert
             var result = await Assert.ThrowsAsync<ArgumentException>(() => service.GetFilesAsync(settings));
-            Assert.Equal("backupDirectorySettings", result.ParamName);
+            Assert.Equal("directoryGlobSettings", result.ParamName);
         }
 
         [Fact]
         public async Task GetFiles_CallsValidator_ForEachBackupDirectorySetting() {
             // Arrange
             var service = GetService();
-            var settings = _fixture.CreateMany<BackupDirectorySetting>(3);
+            var settings = _fixture.CreateMany<IDirectoryGlobSettings>(3);
 
             // Act
             var result = await service.GetFilesAsync(settings);
 
             // Assert
-            _backupDirectorySettingValidatorMock
-                .Verify(x => x.ValidateAsync(It.IsAny<BackupDirectorySetting>(), It.IsAny<CancellationToken>()), Times.Exactly(3));
+            _directoryGlobSettingsValidatorMock
+                .Verify(x => x.ValidateAsync(It.IsAny<IDirectoryGlobSettings>(), It.IsAny<CancellationToken>()), Times.Exactly(3));
         }
 
         [Fact]
         public async Task GetFiles_ThrowsValidationError_WhenValidatorReturnsErrors() {
             // Arrange
             var service = GetService();
-            var settings = _fixture.CreateMany<BackupDirectorySetting>(1);
+            var settings = _fixture.CreateMany<IDirectoryGlobSettings>(1);
             var errors = _fixture.CreateMany<ValidationFailure>(3).ToList();
             var validationResult = new ValidationResult(errors);
-            _backupDirectorySettingValidatorMock
-                .Setup(x => x.ValidateAsync(It.IsAny<BackupDirectorySetting>(), It.IsAny<CancellationToken>()))
+            _directoryGlobSettingsValidatorMock
+                .Setup(x => x.ValidateAsync(It.IsAny<IDirectoryGlobSettings>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(() => validationResult);
 
             // Act & Assert
-            var result = await Assert.ThrowsAsync<BackupDirectoryValidationException>(() => service.GetFilesAsync(settings));
+            var result = await Assert.ThrowsAsync<DirectoryGlobSettingsValidationException>(() => service.GetFilesAsync(settings));
             var newline = Environment.NewLine;
             Assert.Equal($"The following validation errors occurred:{newline}" +
                          $"{errors[0].PropertyName} | {errors[0].ErrorMessage}{newline}" +
@@ -110,8 +110,8 @@ namespace DNI.Backup.Test.Services.FileList {
             }
 
             var service = GetService();
-            var settings = new BackupDirectorySetting {
-                RootDir = rootPath,
+            var settings = new ClientBackupConfig {
+                SourceRootDir = rootPath,
                 IncludeGlob = "**/*"
             };
 
@@ -144,8 +144,8 @@ namespace DNI.Backup.Test.Services.FileList {
             }
 
             var service = GetService();
-            var settings = new BackupDirectorySetting {
-                RootDir = rootPath,
+            var settings = new ClientBackupConfig {
+                SourceRootDir = rootPath,
                 IncludeGlob = ".git/"
             };
 
@@ -178,8 +178,8 @@ namespace DNI.Backup.Test.Services.FileList {
             }
 
             var service = GetService();
-            var settings = new BackupDirectorySetting {
-                RootDir = rootPath,
+            var settings = new ClientBackupConfig {
+                SourceRootDir = rootPath,
                 IncludeGlob = "**/*",
                 ExcludeGlobs = new[] {
                     "**/test.txt"
@@ -220,8 +220,8 @@ namespace DNI.Backup.Test.Services.FileList {
             }
 
             var service = GetService();
-            var settings = new BackupDirectorySetting {
-                RootDir = rootPath,
+            var settings = new ClientBackupConfig {
+                SourceRootDir = rootPath,
                 IncludeGlob = "**/*",
                 ExcludeGlobs = new[] {
                     "*/test*.txt",

@@ -5,6 +5,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="BackupService.cs.bak" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="BackupService.cs.bak" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="FastRsyncNet" Version="2.3.1" />
     <PackageReference Include="FastRsyncNet.Compression" Version="1.0.0" />
     <PackageReference Include="FluentValidation" Version="8.6.2" />
