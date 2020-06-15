@@ -1,22 +1,24 @@
-<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk.Worker">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.1</TargetFramework>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <UserSecretsId>dotnet-DNI.Backup-47D0F322-3F92-4062-883F-6E2EA4F46D45</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="BackupService.cs.bak" />
+    <Content Remove="client-settings.json" />
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Include="BackupService.cs.bak" />
+    <None Include="client-settings.json" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="FastRsyncNet" Version="2.3.1" />
-    <PackageReference Include="FastRsyncNet.Compression" Version="1.0.0" />
-    <PackageReference Include="FluentValidation" Version="8.6.2" />
-    <PackageReference Include="Microsoft.Extensions.FileSystemGlobbing" Version="3.1.3" />
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="3.1.5" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="3.1.3" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\DNI.Backup.Services\DNI.Backup.Services.csproj" />
+  </ItemGroup>
 </Project>

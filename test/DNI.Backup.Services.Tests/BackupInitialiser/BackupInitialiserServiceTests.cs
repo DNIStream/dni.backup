@@ -4,11 +4,12 @@ using AutoFixture;
 using AutoFixture.AutoMoq;
 
 using DNI.Backup.Services.BackupInitialiser;
+using DNI.Backup.TestHelpers;
 
 using Xunit;
 using Xunit.Abstractions;
 
-namespace DNI.Backup.Test.Services.BackupInitialiser {
+namespace DNI.Backup.Services.Tests.BackupInitialiser {
     [Trait(TestTraits.TEST_TYPE, TestTraits.UNIT)]
     public class BackupInitialiserServiceTests {
         private readonly ITestOutputHelper _output;

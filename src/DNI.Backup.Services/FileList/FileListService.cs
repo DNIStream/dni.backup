@@ -12,9 +12,9 @@ using Microsoft.Extensions.FileSystemGlobbing.Abstractions;
 
 namespace DNI.Backup.Services.FileList {
     public class FileListService : IFileListService {
-        private readonly IValidator<DirectoryGlobSettings> _backupDirectorySettingValidator;
+        private readonly IValidator<DirectoryGlobSetting> _backupDirectorySettingValidator;
 
-        public FileListService(IValidator<DirectoryGlobSettings> backupDirectorySettingValidator) {
+        public FileListService(IValidator<DirectoryGlobSetting> backupDirectorySettingValidator) {
             _backupDirectorySettingValidator = backupDirectorySettingValidator;
         }
 

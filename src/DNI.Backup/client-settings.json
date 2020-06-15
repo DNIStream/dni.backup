@@ -1,54 +1,62 @@
 {
-    "serverIP": "192.168.2.1",
-    "serverTCPPort": 873,
-    "serverUsername": "test",
-    "serverPassword": "test", 
-    "schedules": [
-        {
-            "schedule": "mon-20:00",
-            "backupConfigs": [
-                "git-dirs"
+    "backupSettings": {
+        "backupServer": {
+            "ip": "192.168.2.2",
+            "port": 873,
+            "username": "test",
+            "password": "test"
+        },
+        "backupSchedules": {
+            "schedules": [
+                {
+                    "schedule": "mon-20:00",
+                    "backupConfigs": [
+                        "git-dirs"
+                    ]
+                },
+                {
+                    "schedule": "bi-weekly-tue-16:00",
+                    "backupConfigs": [
+                        "git-dirs",
+                        "d-drive"
+                    ]
+                }
             ]
         },
-        {
-            "schedule": "bi-weekly-tue-16:00",
-            "backupConfigs": [
-                "git-dirs",
-                "d-drive"
+        "backupSets": {
+            "sets": [
+                {
+                    "id": "git-dirs",
+                    "sourceRootDir": "D:\\Git\\Personal",
+                    "includeGlob": "**/*",
+                    "excludeGlobs": [
+                        "**/.git/",
+                        "**/obj/",
+                        "**/bin/"
+                    ],
+                    "preserveTree": true,
+                    "deleteDestinationFilesNotInSource": true,
+                    "compressBeforeTransfer": true
+                },
+                {
+                    "id": "c-drive",
+                    "sourceRootDir": "C:\\",
+                    "includeGlob": "**/*",
+                    "excludeGlobs": [
+                        "Recovery/**/*",
+                        "System Volume Information/**/*",
+                        "hiberfil.sys",
+                        "pagefile.sys",
+                        "swapfile.sys",
+                        "AI_RecycleBin",
+                        "$Recycle.Bin",
+                        "NVIDIA Corporation"
+                    ],
+                    "preserveTree": true,
+                    "deleteDestinationFilesNotInSource": true,
+                    "compressBeforeTransfer": true
+                }
             ]
         }
-    ],
-    "backupConfigs": [
-        {
-            "id": "git-dirs",
-            "sourceRootDir": "D:\\Git\\Personal",
-            "includeGlob": "**/*",
-            "excludeGlobs": [
-                "**/.git/",
-                "**/obj/",
-                "**/bin/"
-            ],
-            "preserveTree": true,
-            "deleteDestinationFilesNotInSource": true,
-            "compressBeforeTransfer": true
-        },
-        {
-            "id": "c-drive",
-            "sourceRootDir": "C:\\",
-            "includeGlob": "**/*",
-            "excludeGlobs": [
-                "Recovery/**/*",
-                "System Volume Information/**/*",
-                "hiberfil.sys",
-                "pagefile.sys",
-                "swapfile.sys",
-                "AI_RecycleBin",
-                "$Recycle.Bin",
-                "NVIDIA Corporation"
-            ],
-            "preserveTree": true,
-            "deleteDestinationFilesNotInSource": true,
-            "compressBeforeTransfer": true
-        }
-    ]
+    }
 }

@@ -1,19 +1,18 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 using AutoFixture;
 using AutoFixture.AutoMoq;
 
 using DNI.Backup.Services.FileList;
+using DNI.Backup.TestHelpers;
 
-using FluentValidation;
 using FluentValidation.TestHelper;
 
 using Xunit;
 using Xunit.Abstractions;
 
-namespace DNI.Backup.Test.Services.FileList {
+namespace DNI.Backup.Services.Tests.FileList {
     [Trait(TestTraits.TEST_TYPE, TestTraits.INTEGRATION)]
     public class BackupDirectorySettingValidatorTests {
         private readonly ITestOutputHelper _output;

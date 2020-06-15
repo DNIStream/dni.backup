@@ -7,7 +7,9 @@ using System.Threading.Tasks;
 using AutoFixture;
 using AutoFixture.AutoMoq;
 
+using DNI.Backup.Services.BackupInitialiser;
 using DNI.Backup.Services.FileList;
+using DNI.Backup.TestHelpers;
 
 using FluentValidation;
 using FluentValidation.Results;
@@ -17,19 +19,19 @@ using Moq;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace DNI.Backup.Test.Services.FileList {
+namespace DNI.Backup.Services.Tests.FileList {
     [Trait(TestTraits.TEST_TYPE, TestTraits.INTEGRATION)]
     public class FileListServiceTests {
         private readonly ITestOutputHelper _output;
 
         private readonly IFixture _fixture = new Fixture().Customize(new AutoMoqCustomization {ConfigureMembers = true});
 
-        private readonly Mock<IValidator<DirectoryGlobSettings>> _directoryGlobSettingsValidatorMock;
+        private readonly Mock<IValidator<DirectoryGlobSetting>> _directoryGlobSettingsValidatorMock;
 
         public FileListServiceTests(ITestOutputHelper _output) {
             this._output = _output;
 
-            _directoryGlobSettingsValidatorMock = Mock.Get(_fixture.Create<IValidator<DirectoryGlobSettings>>());
+            _directoryGlobSettingsValidatorMock = Mock.Get(_fixture.Create<IValidator<DirectoryGlobSetting>>());
         }
 
         private IFileListService GetService() {
@@ -51,7 +53,7 @@ namespace DNI.Backup.Test.Services.FileList {
         public async Task GetFiles_ThrowsException_WhenBackupDirectorySettings_ContainsEmptyEnumerable() {
             // Arrange
             var service = GetService();
-            var settings = new DirectoryGlobSettings[0];
+            var settings = new DirectoryGlobSetting[0];
 
             // Act & Assert
             var result = await Assert.ThrowsAsync<ArgumentException>(() => service.GetFilesAsync(settings));
@@ -110,7 +112,7 @@ namespace DNI.Backup.Test.Services.FileList {
             }
 
             var service = GetService();
-            var settings = new ClientBackupConfig {
+            var settings = new BackupSet {
                 SourceRootDir = rootPath,
                 IncludeGlob = "**/*"
             };
@@ -144,7 +146,7 @@ namespace DNI.Backup.Test.Services.FileList {
             }
 
             var service = GetService();
-            var settings = new ClientBackupConfig {
+            var settings = new BackupSet {
                 SourceRootDir = rootPath,
                 IncludeGlob = ".git/"
             };
@@ -178,7 +180,7 @@ namespace DNI.Backup.Test.Services.FileList {
             }
 
             var service = GetService();
-            var settings = new ClientBackupConfig {
+            var settings = new BackupSet {
                 SourceRootDir = rootPath,
                 IncludeGlob = "**/*",
                 ExcludeGlobs = new[] {
@@ -220,7 +222,7 @@ namespace DNI.Backup.Test.Services.FileList {
             }
 
             var service = GetService();
-            var settings = new ClientBackupConfig {
+            var settings = new BackupSet {
                 SourceRootDir = rootPath,
                 IncludeGlob = "**/*",
                 ExcludeGlobs = new[] {

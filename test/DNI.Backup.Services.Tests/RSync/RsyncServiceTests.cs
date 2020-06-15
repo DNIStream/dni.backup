@@ -6,11 +6,12 @@ using AutoFixture;
 using AutoFixture.AutoMoq;
 
 using DNI.Backup.Services.Rsync;
+using DNI.Backup.TestHelpers;
 
 using Xunit;
 using Xunit.Abstractions;
 
-namespace DNI.Backup.Test.Services.RSync {
+namespace DNI.Backup.Services.Tests.RSync {
     [Trait(TestTraits.TEST_TYPE, TestTraits.INTEGRATION)]
     public class RsyncServiceTests {
         private readonly ITestOutputHelper _output;

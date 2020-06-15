@@ -332,4 +332,4 @@ ASALocalRun/
 .mfractor/
 
 # Repo specific
-test/DNI.Backup.Test/resources
+test/DNI.Backup.Services.Tests/resources

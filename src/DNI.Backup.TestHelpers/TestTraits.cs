@@ -1,5 +1,5 @@
 ﻿// ReSharper disable InconsistentNaming
-namespace DNI.Backup.Test {
+namespace DNI.Backup.TestHelpers {
     public static class TestTraits {
         // Keys
         public const string TEST_TYPE = "TEST_TYPE";

@@ -3,7 +3,7 @@
 using FluentValidation;
 
 namespace DNI.Backup.Services.FileList {
-    public class DirectoryGlobSettingsValidator : AbstractValidator<DirectoryGlobSettings> {
+    public class DirectoryGlobSettingsValidator : AbstractValidator<DirectoryGlobSetting> {
         public DirectoryGlobSettingsValidator() {
             RuleFor(x => x.SourceRootDir)
                 .NotNull()
