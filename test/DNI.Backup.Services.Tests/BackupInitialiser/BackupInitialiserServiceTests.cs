@@ -3,7 +3,7 @@
 using AutoFixture;
 using AutoFixture.AutoMoq;
 
-using DNI.Backup.Services.BackupInitialiser;
+using DNI.Backup.Services.Contracts;
 using DNI.Backup.TestHelpers;
 
 using Xunit;
@@ -21,7 +21,7 @@ namespace DNI.Backup.Services.Tests.BackupInitialiser {
         }
 
         private IClientBackupInitialiserService GetService() {
-            return new ClientBackupInitialiserService();
+            return new ClientBackupInitialiserService(null);
         }
 
         [Fact]

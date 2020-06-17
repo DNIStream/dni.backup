@@ -4,7 +4,7 @@ using System.Linq;
 using AutoFixture;
 using AutoFixture.AutoMoq;
 
-using DNI.Backup.Services.FileList;
+using DNI.Backup.Model.Validators;
 using DNI.Backup.TestHelpers;
 
 using FluentValidation.TestHelper;
@@ -23,8 +23,8 @@ namespace DNI.Backup.Services.Tests.FileList {
             this._output = _output;
         }
 
-        private DirectoryGlobSettingsValidator GetValidator() {
-            return new DirectoryGlobSettingsValidator();
+        private DirectoryGlobValidator GetValidator() {
+            return new DirectoryGlobValidator();
         }
 
         #region SourceRootDir
@@ -106,7 +106,7 @@ namespace DNI.Backup.Services.Tests.FileList {
             var validator = GetValidator();
 
             // Act & Assert
-            validator.ShouldNotHaveValidationErrorFor(s => s.ExcludeGlobs, (IEnumerable<string>)null);
+            validator.ShouldNotHaveValidationErrorFor(s => s.ExcludeGlobs, (IEnumerable<string>) null);
         }
 
         [Theory]
@@ -123,6 +123,5 @@ namespace DNI.Backup.Services.Tests.FileList {
             validator.ShouldHaveValidationErrorFor(s => s.ExcludeGlobs, globs)
                 .WithErrorMessage("ExcludeGlobs entries must have a value");
         }
-
     }
 }

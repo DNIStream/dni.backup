@@ -1,21 +1,24 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 
+using DNI.Backup.Model;
+using DNI.Backup.Services.Contracts;
+
 using Microsoft.Extensions.Logging;
 
-namespace DNI.Backup.Services.BackupInitialiser {
+namespace DNI.Backup.Services {
     public class ClientBackupInitialiserService : IClientBackupInitialiserService {
         private readonly ILogger<ClientBackupInitialiserService> _logger;
+        private readonly IBackupSetResolver _backupSetResolver;
 
-        public ClientBackupInitialiserService(ILogger<ClientBackupInitialiserService> logger) {
+        public ClientBackupInitialiserService(ILogger<ClientBackupInitialiserService> logger, IBackupSetResolver backupSetResolver, IFileListService fileListService) {
             _logger = logger;
-            _logger.LogInformation("Created backup service scoped");
+            _backupSetResolver = backupSetResolver;
+            _logger.LogInformation("{service} initialised", GetType().Name);
         }
 
-        public async Task ProcessBackup(CancellationToken cancellationToken) {
-            _logger.LogInformation("ProcessBackup() initialised ");
-            //while(!cancellationToken.IsCancellationRequested) {
-            // _logger.LogInformation("ProcessBackup() iteration");
+        public async Task ProcessBackupAsync(CancellationToken cancellationToken, BackupSchedule schedule) {
+            _logger.LogInformation("ProcessBackupAsync() called");
             // TODO: Iterate through configs
             // TODO: Validate / read configs against backupConfigs in client configuration file (.Net Core configuration reader?)
             // TODO: Enumerate list of local files to be backed up
@@ -29,10 +32,6 @@ namespace DNI.Backup.Services.BackupInitialiser {
             //      if new, send file
             //      if exists, generate delta and send to server -> Server then applies delta patch
             //      if deleted, tell server to delete if DeleteDestinationFilesNotInSource set to true
-            // TODO: Await server response and if successful, return true
-            await Task.Delay(1000, cancellationToken);
-            // throw new NotImplementedException();
-            //}
         }
     }
 }

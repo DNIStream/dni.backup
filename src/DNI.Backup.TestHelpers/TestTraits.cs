@@ -1,4 +1,5 @@
 ﻿// ReSharper disable InconsistentNaming
+
 namespace DNI.Backup.TestHelpers {
     public static class TestTraits {
         // Keys

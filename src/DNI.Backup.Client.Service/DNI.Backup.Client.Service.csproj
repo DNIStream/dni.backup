@@ -1,16 +1,20 @@
-<Project Sdk="Microsoft.NET.Sdk.Worker">
+﻿<Project Sdk="Microsoft.NET.Sdk.Worker">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <UserSecretsId>dotnet-DNI.Backup-47D0F322-3F92-4062-883F-6E2EA4F46D45</UserSecretsId>
+    <AssemblyName>DNI.Backup.Client.Service</AssemblyName>
+    <RootNamespace>DNI.Backup.Client.Service</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
     <Content Remove="client-settings.json" />
+    <Content Remove="server-settings.json" />
   </ItemGroup>
 
   <ItemGroup>
     <None Include="client-settings.json" />
+    <None Include="server-settings.json" />
   </ItemGroup>
 
   <ItemGroup>

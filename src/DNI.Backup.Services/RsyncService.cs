@@ -2,12 +2,14 @@
 using System.IO;
 using System.Threading.Tasks;
 
+using DNI.Backup.Services.Contracts;
+
 using FastRsync.Core;
 using FastRsync.Delta;
 using FastRsync.Diagnostics;
 using FastRsync.Signature;
 
-namespace DNI.Backup.Services.Rsync {
+namespace DNI.Backup.Services {
     public class RsyncService : IRsyncService {
         /// <summary>
         ///     Creates a signature for the specified <paramref name="inputFilePath" /> and returns it as a

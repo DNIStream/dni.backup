@@ -1,7 +1,7 @@
 ﻿using System.IO;
 using System.Threading.Tasks;
 
-namespace DNI.Backup.Services.Rsync {
+namespace DNI.Backup.Services.Contracts {
     public interface IRsyncService {
         Task<MemoryStream> CreateSignatureAsync(string inputFilePath);
 

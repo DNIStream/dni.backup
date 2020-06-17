@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Reference Include="FluentValidation">
+      <HintPath>..\..\packages\fluentvalidation\8.6.2\lib\netstandard2.0\FluentValidation.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>

@@ -6,17 +6,20 @@
             "username": "test",
             "password": "test"
         },
+        "schedulerSettings": {
+            "pollingInterval": 1000
+        },
         "backupSchedules": {
             "schedules": [
                 {
                     "schedule": "mon-20:00",
-                    "backupConfigs": [
+                    "sets": [
                         "git-dirs"
                     ]
                 },
                 {
                     "schedule": "bi-weekly-tue-16:00",
-                    "backupConfigs": [
+                    "sets": [
                         "git-dirs",
                         "d-drive"
                     ]

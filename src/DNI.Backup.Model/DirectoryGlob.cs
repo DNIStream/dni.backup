@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 
-namespace DNI.Backup.Services.FileList {
-    public class DirectoryGlobSetting: IDirectoryGlobSettings {
+namespace DNI.Backup.Model {
+    public class DirectoryGlob : IDirectoryGlob {
         public string SourceRootDir { get; set; }
 
         public string IncludeGlob { get; set; }

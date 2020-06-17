@@ -2,16 +2,16 @@
 
 using FluentValidation;
 
-namespace DNI.Backup.Services.FileList {
-    public class DirectoryGlobSettingsValidator : AbstractValidator<DirectoryGlobSetting> {
-        public DirectoryGlobSettingsValidator() {
+namespace DNI.Backup.Model.Validators {
+    public class DirectoryGlobValidator : AbstractValidator<DirectoryGlob> {
+        public DirectoryGlobValidator() {
             RuleFor(x => x.SourceRootDir)
                 .NotNull()
                 .NotEmpty()
                 .WithMessage("SourceRootDir is required")
-                .MustAsync(async (path,t) => Path.IsPathRooted(path) && Path.IsPathFullyQualified(path))
+                .Must(path => Path.IsPathRooted(path) && Path.IsPathFullyQualified(path))
                 .WithMessage(@"SourceRootDir must be a fully qualified root path (e.g. C:\ in Windows, /usr/ in linux)")
-                .MustAsync(async (path, t) => Directory.Exists(path))
+                .Must(Directory.Exists)
                 .WithMessage(path => $"Path '{path.SourceRootDir}' does not exist");
 
             RuleFor(x => x.IncludeGlob)

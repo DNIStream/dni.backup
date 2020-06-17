@@ -7,8 +7,9 @@ using System.Threading.Tasks;
 using AutoFixture;
 using AutoFixture.AutoMoq;
 
-using DNI.Backup.Services.BackupInitialiser;
-using DNI.Backup.Services.FileList;
+using DNI.Backup.Model;
+using DNI.Backup.Model.Validators;
+using DNI.Backup.Services.Contracts;
 using DNI.Backup.TestHelpers;
 
 using FluentValidation;
@@ -26,12 +27,12 @@ namespace DNI.Backup.Services.Tests.FileList {
 
         private readonly IFixture _fixture = new Fixture().Customize(new AutoMoqCustomization {ConfigureMembers = true});
 
-        private readonly Mock<IValidator<DirectoryGlobSetting>> _directoryGlobSettingsValidatorMock;
+        private readonly Mock<IValidator<DirectoryGlob>> _directoryGlobSettingsValidatorMock;
 
         public FileListServiceTests(ITestOutputHelper _output) {
             this._output = _output;
 
-            _directoryGlobSettingsValidatorMock = Mock.Get(_fixture.Create<IValidator<DirectoryGlobSetting>>());
+            _directoryGlobSettingsValidatorMock = Mock.Get(_fixture.Create<IValidator<DirectoryGlob>>());
         }
 
         private IFileListService GetService() {
@@ -53,7 +54,7 @@ namespace DNI.Backup.Services.Tests.FileList {
         public async Task GetFiles_ThrowsException_WhenBackupDirectorySettings_ContainsEmptyEnumerable() {
             // Arrange
             var service = GetService();
-            var settings = new DirectoryGlobSetting[0];
+            var settings = new DirectoryGlob[0];
 
             // Act & Assert
             var result = await Assert.ThrowsAsync<ArgumentException>(() => service.GetFilesAsync(settings));
@@ -64,25 +65,25 @@ namespace DNI.Backup.Services.Tests.FileList {
         public async Task GetFiles_CallsValidator_ForEachBackupDirectorySetting() {
             // Arrange
             var service = GetService();
-            var settings = _fixture.CreateMany<IDirectoryGlobSettings>(3);
+            var settings = _fixture.CreateMany<IDirectoryGlob>(3);
 
             // Act
             var result = await service.GetFilesAsync(settings);
 
             // Assert
             _directoryGlobSettingsValidatorMock
-                .Verify(x => x.ValidateAsync(It.IsAny<IDirectoryGlobSettings>(), It.IsAny<CancellationToken>()), Times.Exactly(3));
+                .Verify(x => x.ValidateAsync(It.IsAny<IDirectoryGlob>(), It.IsAny<CancellationToken>()), Times.Exactly(3));
         }
 
         [Fact]
         public async Task GetFiles_ThrowsValidationError_WhenValidatorReturnsErrors() {
             // Arrange
             var service = GetService();
-            var settings = _fixture.CreateMany<IDirectoryGlobSettings>(1);
+            var settings = _fixture.CreateMany<IDirectoryGlob>(1);
             var errors = _fixture.CreateMany<ValidationFailure>(3).ToList();
             var validationResult = new ValidationResult(errors);
             _directoryGlobSettingsValidatorMock
-                .Setup(x => x.ValidateAsync(It.IsAny<IDirectoryGlobSettings>(), It.IsAny<CancellationToken>()))
+                .Setup(x => x.ValidateAsync(It.IsAny<IDirectoryGlob>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(() => validationResult);
 
             // Act & Assert

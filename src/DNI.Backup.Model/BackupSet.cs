@@ -1,7 +1,5 @@
-﻿using DNI.Backup.Services.FileList;
-
-namespace DNI.Backup.Services.BackupInitialiser {
-    public class BackupSet : DirectoryGlobSetting {
+﻿namespace DNI.Backup.Model {
+    public class BackupSet : DirectoryGlob {
         public string Id { get; set; }
 
         public bool PreserveTree { get; set; }

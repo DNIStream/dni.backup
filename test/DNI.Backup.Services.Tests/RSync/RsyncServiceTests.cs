@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using AutoFixture;
 using AutoFixture.AutoMoq;
 
-using DNI.Backup.Services.Rsync;
+using DNI.Backup.Services.Contracts;
 using DNI.Backup.TestHelpers;
 
 using Xunit;

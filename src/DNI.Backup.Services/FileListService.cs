@@ -5,20 +5,24 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using DNI.Backup.Model;
+using DNI.Backup.Model.Validators;
+using DNI.Backup.Services.Contracts;
+
 using FluentValidation;
 
 using Microsoft.Extensions.FileSystemGlobbing;
 using Microsoft.Extensions.FileSystemGlobbing.Abstractions;
 
-namespace DNI.Backup.Services.FileList {
+namespace DNI.Backup.Services {
     public class FileListService : IFileListService {
-        private readonly IValidator<DirectoryGlobSetting> _backupDirectorySettingValidator;
+        private readonly IValidator<DirectoryGlob> _backupDirectorySettingValidator;
 
-        public FileListService(IValidator<DirectoryGlobSetting> backupDirectorySettingValidator) {
+        public FileListService(IValidator<DirectoryGlob> backupDirectorySettingValidator) {
             _backupDirectorySettingValidator = backupDirectorySettingValidator;
         }
 
-        public async Task<IEnumerable<string>> GetFilesAsync(IEnumerable<IDirectoryGlobSettings> directoryGlobSettings) {
+        public async Task<IEnumerable<string>> GetFilesAsync(IEnumerable<IDirectoryGlob> directoryGlobSettings) {
             if(directoryGlobSettings == null) {
                 throw new ArgumentNullException(nameof(directoryGlobSettings));
             }

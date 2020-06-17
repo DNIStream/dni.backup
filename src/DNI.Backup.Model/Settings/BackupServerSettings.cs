@@ -1,4 +1,4 @@
-﻿namespace DNI.Backup.Services.BackupInitialiser {
+﻿namespace DNI.Backup.Model.Settings {
     public class BackupServerSettings {
         public string Ip { get; set; }
 
