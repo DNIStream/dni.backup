@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 using DNI.Backup.Model;
@@ -10,10 +12,10 @@ using Microsoft.Extensions.Options;
 
 namespace DNI.Backup.Services {
     public class BackupSetResolver : IBackupSetResolver {
-        private readonly ILogger<ClientBackupInitialiserService> _logger;
+        private readonly ILogger<BackupSetResolver> _logger;
         private BackupSetSettings _backupSetSettings;
 
-        public BackupSetResolver(ILogger<ClientBackupInitialiserService> logger, IOptionsMonitor<BackupSetSettings> backupSetSettings) {
+        public BackupSetResolver(ILogger<BackupSetResolver> logger, IOptionsMonitor<BackupSetSettings> backupSetSettings) {
             _logger = logger;
             _backupSetSettings = backupSetSettings.CurrentValue;
             backupSetSettings.OnChange(changedSettings => {
@@ -23,7 +25,22 @@ namespace DNI.Backup.Services {
         }
 
         public async Task<BackupSet[]> ResolveAsync(string[] setIds) {
-            throw new NotImplementedException();
+            if(setIds == null) {
+                throw new ArgumentNullException(nameof(setIds));
+            }
+
+            if(setIds.Length == 0) {
+                throw new ArgumentException("setsIds must have at least one entry", nameof(setIds));
+            }
+
+            var sets = await Task.Run(() => {
+                return setIds
+                    .Select(id => _backupSetSettings.Sets.FirstOrDefault(x => x.Id == id))
+                    .Where(set => set != null)
+                    .ToArray();
+            });
+
+            return !sets.Any() ? null : sets;
         }
     }
 }

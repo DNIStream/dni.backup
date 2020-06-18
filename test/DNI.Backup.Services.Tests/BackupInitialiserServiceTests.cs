@@ -9,7 +9,7 @@ using DNI.Backup.TestHelpers;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace DNI.Backup.Services.Tests.BackupInitialiser {
+namespace DNI.Backup.Services.Tests {
     [Trait(TestTraits.TEST_TYPE, TestTraits.UNIT)]
     public class BackupInitialiserServiceTests {
         private readonly ITestOutputHelper _output;
@@ -20,18 +20,18 @@ namespace DNI.Backup.Services.Tests.BackupInitialiser {
             this._output = _output;
         }
 
-        private IClientBackupInitialiserService GetService() {
-            return new ClientBackupInitialiserService(null);
-        }
+        //private IClientBackupInitialiserService GetService() {
+        //    return new ClientBackupInitialiserService(null);
+        //}
 
-        [Fact]
-        public async Task Test() {
-            // Arrange
-            var service = GetService();
+        //[Fact]
+        //public async Task Test() {
+        //    // Arrange
+        //    var service = GetService();
 
-            // Act
+        //    // Act
 
-            // Assert
-        }
+        //    // Assert
+        //}
     }
 }

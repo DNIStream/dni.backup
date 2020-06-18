@@ -12,7 +12,7 @@ using FluentValidation.TestHelper;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace DNI.Backup.Services.Tests.FileList {
+namespace DNI.Backup.Services.Tests {
     [Trait(TestTraits.TEST_TYPE, TestTraits.INTEGRATION)]
     public class BackupDirectorySettingValidatorTests {
         private readonly ITestOutputHelper _output;

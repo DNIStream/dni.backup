@@ -11,7 +11,7 @@ using DNI.Backup.TestHelpers;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace DNI.Backup.Services.Tests.RSync {
+namespace DNI.Backup.Services.Tests {
     [Trait(TestTraits.TEST_TYPE, TestTraits.INTEGRATION)]
     public class RsyncServiceTests {
         private readonly ITestOutputHelper _output;
